@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Results</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;}
+    header{background:#1e293b;border-bottom:1px solid #334155;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;}
+    header h1{color:#38bdf8;font-size:18px;}
+    .nav a{color:#94a3b8;text-decoration:none;font-size:13px;padding:7px 14px;border-radius:7px;margin-left:6px;}
+    .nav a:hover{background:#334155;color:#f1f5f9;}
+
+    .main{max-width:900px;margin:28px auto;padding:0 20px;}
+
+    /* Score banner */
+    .score-banner{background:linear-gradient(135deg,#0c2a3a,#0f172a);border:1px solid #38bdf8;border-radius:14px;padding:28px 32px;margin-bottom:24px;}
+    .score-banner h2{color:#38bdf8;font-size:13px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
+    .score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+    .score-stat{text-align:center;}
+    .score-stat .val{font-size:28px;font-weight:700;line-height:1;}
+    .score-stat .lbl{font-size:11px;color:#64748b;margin-top:4px;}
+    .motivation-msg{margin-top:16px;padding:12px 16px;background:#0f172a;border-radius:8px;font-size:13px;color:#94a3b8;border-left:3px solid #38bdf8;}
+
+    /* Answer review */
+    .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+    .review-header h3{font-size:15px;font-weight:500;}
+    .filter-btns{display:flex;gap:6px;}
+    .filter-btn{padding:6px 14px;border:1px solid #334155;border-radius:6px;background:none;color:#64748b;font-size:12px;cursor:pointer;transition:all .2s;}
+    .filter-btn.active{background:#334155;color:#f1f5f9;}
+
+    .answer-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:18px;margin-bottom:12px;transition:border .2s;}
+    .answer-card.correct{border-left:3px solid #16a34a;}
+    .answer-card.wrong{border-left:3px solid #ef4444;}
+    .answer-card.skipped{border-left:3px solid #64748b;}
+
+    .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .q-meta-left{display:flex;gap:8px;align-items:center;}
+    .q-num-badge{font-size:11px;color:#64748b;}
+    .status-badge{font-size:11px;padding:2px 8px;border-radius:8px;font-weight:600;}
+    .sb-correct{background:#064e3b;color:#6ee7b7;}
+    .sb-wrong{background:#450a0a;color:#fca5a5;}
+    .sb-skipped{background:#1e293b;color:#64748b;}
+    .marks-badge{font-size:11px;padding:2px 8px;border-radius:8px;}
+    .mb-plus{background:#064e3b;color:#6ee7b7;}
+    .mb-minus{background:#450a0a;color:#fca5a5;}
+    .mb-zero{background:#1e293b;color:#64748b;}
+
+    .q-text{font-size:14px;color:#f1f5f9;margin-bottom:12px;line-height:1.6;}
+
+    .options-review{display:grid;gap:6px;}
+    .opt-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;font-size:13px;}
+    .opt-row.correct-ans{background:#064e3b;border:1px solid #16a34a;}
+    .opt-row.wrong-ans{background:#450a0a;border:1px solid #7f1d1d;}
+    .opt-row.neutral{background:#0f172a;border:1px solid #1e293b;}
+    .opt-lbl{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+    .opt-icon{margin-left:auto;font-size:14px;}
+
+    .empty-state{text-align:center;padding:40px;color:#475569;font-size:14px;}
+
+    .summary-bar{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+    .sum-item{display:flex;align-items:center;gap:6px;font-size:13px;}
+    .sum-dot{width:10px;height:10px;border-radius:50%;}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Test Results & Review</h1>
+  <div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="test.html">Take Another Test</a>
+  </div>
+</header>
+
+<div class="main">
+
+  <div id="loadState" class="empty-state">Loading results...</div>
+  <div id="resultsContent" style="display:none">
+
+    <!-- Score Banner -->
+    <div class="score-banner">
+      <h2>Your Performance</h2>
+      <div class="score-grid">
+        <div class="score-stat">
+          <div class="val" id="rScore" style="color:#38bdf8">--</div>
+          <div class="lbl">Predicted Score</div>
+        </div>
+        <div class="score-stat">
+          <div class="val" id="rAccuracy" style="color:#38bdf8">--%</div>
+          <div class="lbl">Accuracy</div>
+        </div>
+        <div class="score-stat">
+          <div class="val" id="rCorrect" style="color:#22c55e">--</div>
+          <div class="lbl">Correct</div>
+        </div>
+        <div class="score-stat">
+          <div class="val" id="rWrong" style="color:#ef4444">--</div>
+          <div class="lbl">Wrong</div>
+        </div>
+        <div class="score-stat">
+          <div class="val" id="rSkipped" style="color:#64748b">--</div>
+          <div class="lbl">Skipped</div>
+        </div>
+      </div>
+      <div class="motivation-msg" id="rMotivation"></div>
+    </div>
+
+    <!-- Answer Review -->
+    <div class="review-header">
+      <h3>Answer Review</h3>
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="filterCards('all',this)">All</button>
+        <button class="filter-btn" onclick="filterCards('correct',this)">Correct</button>
+        <button class="filter-btn" onclick="filterCards('wrong',this)">Wrong</button>
+        <button class="filter-btn" onclick="filterCards('skipped',this)">Skipped</button>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="sum-item">
+        <div class="sum-dot" style="background:#22c55e"></div>
+        <span id="sumCorrect" style="color:#6ee7b7">0 correct</span>
+      </div>
+      <div class="sum-item">
+        <div class="sum-dot" style="background:#ef4444"></div>
+        <span id="sumWrong" style="color:#fca5a5">0 wrong</span>
+      </div>
+      <div class="sum-item">
+        <div class="sum-dot" style="background:#64748b"></div>
+        <span id="sumSkipped" style="color:#94a3b8">0 skipped</span>
+      </div>
+    </div>
+
+    <div id="answerCards"></div>
+
+  </div>
+</div>
+
+<script>
+const token = localStorage.getItem('token');
+if (!token) window.location.href = 'index.html';
+
+let allCards = [];
+
+function getMotivation(accuracy) {
+  if (accuracy >= 85)
+    return "Outstanding performance! You are well on track for GATE. Keep this consistency and you will achieve a top rank!";
+  if (accuracy >= 70)
+    return "Great job! You are performing above average. Focus on the wrong answers below to push your score even higher.";
+  if (accuracy >= 50)
+    return "Good effort! Review the questions you got wrong — understanding your mistakes is the fastest way to improve.";
+  if (accuracy >= 30)
+    return "Keep going! Every wrong answer is a learning opportunity. Study the correct answers below and revise those topics.";
+  return "Don't give up! Even experts started from zero. Review each answer carefully and strengthen your weak areas.";
+}
+
+function getMarksNote(isCorrect, isSkipped, marks) {
+  if (isSkipped || isSkipped === undefined)
+    return { text: '0 marks', cls: 'mb-zero' };
+  if (isCorrect)
+    return { text: `+${marks} mark${marks > 1 ? 's' : ''}`, cls: 'mb-plus' };
+  const penalty = marks === 2 ? '-0.67' : '-0.33';
+  return { text: `${penalty} marks`, cls: 'mb-minus' };
+}
+
+function renderCards(data, filter) {
+  const container = document.getElementById('answerCards');
+  let cards = allCards;
+  if (filter === 'correct') cards = allCards.filter(c => c.status === 'correct');
+  if (filter === 'wrong')   cards = allCards.filter(c => c.status === 'wrong');
+  if (filter === 'skipped') cards = allCards.filter(c => c.status === 'skipped');
+
+  if (cards.length === 0) {
+    container.innerHTML = `<div class="empty-state">No ${filter} answers</div>`;
+    return;
+  }
+
+  container.innerHTML = cards.map((card, idx) => {
+    const statusClass = card.status;
+    const statusBadge = card.status === 'correct'
+      ? '<span class="status-badge sb-correct">Correct</span>'
+      : card.status === 'wrong'
+      ? '<span class="status-badge sb-wrong">Wrong</span>'
+      : '<span class="status-badge sb-skipped">Skipped</span>';
+
+    const marks     = card.marks || 1;
+    const isSkipped = !card.selected;
+    const mNote     = getMarksNote(card.isCorrect, isSkipped, marks);
+
+    const opts = ['A','B','C','D'].map((lbl, i) => {
+      const text = card['option' + lbl];
+      const isCorrectOpt = lbl === card.correct;
+      const isUserOpt    = lbl === card.selected;
+
+      let rowClass = 'neutral';
+      let icon     = '';
+      let lblBg    = 'background:#334155;color:#94a3b8';
+
+      if (isCorrectOpt) {
+        rowClass = 'correct-ans';
+        icon     = '&#10003;';
+        lblBg    = 'background:#16a34a;color:#fff';
+      } else if (isUserOpt && !isCorrectOpt) {
+        rowClass = 'wrong-ans';
+        icon     = '&#10007;';
+        lblBg    = 'background:#dc2626;color:#fff';
+      }
+
+      return `
+        <div class="opt-row ${rowClass}">
+          <div class="opt-lbl" style="${lblBg}">${lbl}</div>
+          <div>${text || ''}</div>
+          ${icon ? `<div class="opt-icon">${icon}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="answer-card ${statusClass}">
+        <div class="q-meta">
+          <div class="q-meta-left">
+            <span class="q-num-badge">Q${card.qNum} · ${card.subject || ''}</span>
+            ${statusBadge}
+            <span class="marks-badge ${mNote.cls}">${mNote.text}</span>
+          </div>
+          <span style="font-size:11px;color:#475569">${marks} mark question</span>
+        </div>
+        <div class="q-text">${card.questionText}</div>
+        <div class="options-review">${opts}</div>
+        ${card.status === 'skipped'
+          ? `<div style="margin-top:10px;font-size:12px;color:#64748b">
+               Correct answer: <strong style="color:#6ee7b7">
+               Option ${card.correct}</strong>
+             </div>`
+          : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function filterCards(type, btn) {
+  document.querySelectorAll('.filter-btn')
+    .forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards(null, type);
+}
+
+function loadResults() {
+  const raw = localStorage.getItem('lastResult');
+  if (!raw) {
+    document.getElementById('loadState').textContent =
+      'No test results found. Take a test first.';
+    return;
+  }
+
+  try {
+    const data = JSON.parse(raw);
+    const tr   = data.testResult;
+    const pred = data.prediction;
+
+    document.getElementById('loadState').style.display    = 'none';
+    document.getElementById('resultsContent').style.display = 'block';
+
+    // Score banner
+    document.getElementById('rScore').textContent =
+      pred?.predictedScore?.toFixed(1) || '--';
+    document.getElementById('rAccuracy').textContent =
+      (tr?.accuracy?.toFixed(1) || '--') + '%';
+    document.getElementById('rCorrect').textContent  = tr?.correctAnswers || 0;
+    document.getElementById('rWrong').textContent    = tr?.wrongAnswers   || 0;
+    document.getElementById('rSkipped').textContent  = tr?.skipped        || 0;
+    document.getElementById('rMotivation').textContent =
+      getMotivation(tr?.accuracy || 0);
+
+    document.getElementById('sumCorrect').textContent =
+      (tr?.correctAnswers || 0) + ' correct';
+    document.getElementById('sumWrong').textContent   =
+      (tr?.wrongAnswers   || 0) + ' wrong';
+    document.getElementById('sumSkipped').textContent =
+      (tr?.skipped        || 0) + ' skipped';
+
+    // Build answer cards from stored data
+    const stored = JSON.parse(
+      localStorage.getItem('lastAnswers') || '{}');
+    const questions = JSON.parse(
+      localStorage.getItem('lastQuestions') || '[]');
+
+    if (questions.length > 0) {
+      let qNum = 0;
+      allCards = questions.map(q => {
+        qNum++;
+        const selected  = stored[q.id];
+        const correct   = tr?.answerKey ? tr.answerKey[q.id] : null;
+        
+        const isCorrect = selected && correct &&
+          selected.toUpperCase() === correct.toUpperCase();
+        const status    = !selected ? 'skipped'
+                        : isCorrect ? 'correct' : 'wrong';
+        return {
+          qNum, status, isCorrect,
+          questionText: q.questionText,
+          optionA: q.optionA, optionB: q.optionB,
+          optionC: q.optionC, optionD: q.optionD,
+          correct:  correct,
+          selected: selected,
+          marks:    q.marks || 1,
+          subject:  q.subject
+        };
+      });
+    } else {
+      allCards = [];
+      document.getElementById('answerCards').innerHTML =
+        '<div class="empty-state">Detailed answer review will be available from your next test.</div>';
+    }
+
+    renderCards(null, 'all');
+
+  } catch(e) {
+    document.getElementById('loadState').textContent =
+      'Error loading results: ' + e.message;
+  }
+}
+
+loadResults();
+</script>
+</body>
+</html>

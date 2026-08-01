@@ -1,0 +1,116 @@
+{
+  "Data Structures": [
+    {
+      "id": "pyq_ds_1",
+      "year": "2024",
+      "question": "Which of the following is the time complexity of building a heap of size N?",
+      "options": ["O(N log N)", "O(N)", "O(log N)", "O(N^2)"],
+      "answer": "O(N)",
+      "explanation": "Building a heap takes O(N) using the bottom-up approach (Heapify)."
+    },
+    {
+      "id": "pyq_ds_2",
+      "year": "2023",
+      "question": "The post-order traversal of a binary search tree is 3, 5, 8, 7, 6. What is the pre-order traversal?",
+      "options": ["6, 3, 5, 8, 7", "6, 5, 3, 7, 8", "3, 5, 6, 7, 8", "8, 7, 6, 5, 3"],
+      "answer": "6, 5, 3, 7, 8",
+      "explanation": "In a BST, the root is the last element of post-order (6). Pre-order follows Root, Left, Right."
+    }
+  ],
+  "Algorithms": [
+    {
+      "id": "pyq_algo_1",
+      "year": "2024",
+      "question": "What is the worst-case time complexity of Merge Sort?",
+      "options": ["O(N)", "O(N log N)", "O(N^2)", "O(log N)"],
+      "answer": "O(N log N)",
+      "explanation": "Merge Sort consistently takes O(N log N) in all cases (Best, Average, Worst)."
+    }
+  ],
+  "Operating Systems": [
+    {
+      "id": "pyq_os_1",
+      "year": "2024",
+      "question": "Consider a system with 3 processes sharing 4 instances of a resource. Each process needs max 2 instances. Is the state safe?",
+      "options": ["Always Safe", "Always Deadlock", "Safe only if 1 process finishes", "None"],
+      "answer": "Always Safe",
+      "explanation": "Max needed = 3 * 2 = 6. Total available = 4. Since each process only needs 2, at least one is guaranteed to finish."
+    },
+    {
+      "id": "pyq_os_2",
+      "year": "2023",
+      "question": "In a paging system, if page size is 4KB and physical memory is 64KB, how many bits are in the physical address?",
+      "options": ["12", "14", "16", "20"],
+      "answer": "16",
+      "explanation": "64KB = 2^16 bytes. Physical address bits = log2(Memory Size) = 16 bits."
+    }
+  ],
+  "DBMS": [
+    {
+      "id": "pyq_dbms_1",
+      "year": "2024",
+      "question": "A table R(A, B, C, D) has FDs A->B and B->C. What is the highest normal form?",
+      "options": ["1NF", "2NF", "3NF", "BCNF"],
+      "answer": "2NF",
+      "explanation": "A->B and B->C implies A->C (transitive). D is not dependent on anything. It is 2NF."
+    }
+  ],
+  "Computer Networks": [
+    {
+      "id": "pyq_cn_1",
+      "year": "2024",
+      "question": "Which of the following protocols is used to find the IP address of a host given its MAC address?",
+      "options": ["ARP", "RARP", "DHCP", "DNS"],
+      "answer": "RARP",
+      "explanation": "RARP (Reverse ARP) maps a MAC address to an IP address."
+    }
+  ],
+  "Theory of Computation": [
+    {
+      "id": "pyq_toc_1",
+      "year": "2024",
+      "question": "Which of the following is TRUE about the language L = {a^n b^n | n >= 0}?",
+      "options": ["It is Regular", "It is Context-Free", "It is Non-Recursive", "None"],
+      "answer": "It is Context-Free",
+      "explanation": "L requires counting (matching a's and b's), so it is CFG but not Regular."
+    }
+  ],
+  "Compiler Design": [
+    {
+      "id": "pyq_cd_1",
+      "year": "2024",
+      "question": "Which of the following is a bottom-up parser?",
+      "options": ["LL(1)", "Recursive Descent", "LR(1)", "Predictive Parser"],
+      "answer": "LR(1)",
+      "explanation": "LR parsers are bottom-up, while LL parsers are top-down."
+    },
+    {
+      "id": "pyq_cd_2",
+      "year": "2023",
+      "question": "Syntax-Directed Translation (SDT) is used for which phase of compilation?",
+      "options": ["Lexical Analysis", "Syntax Analysis", "Semantic Analysis", "Code Optimization"],
+      "answer": "Semantic Analysis",
+      "explanation": "SDT associates rules with production to perform semantic checks."
+    }
+  ],
+  "Engineering Mathematics": [
+    {
+      "id": "pyq_em_1",
+      "year": "2024",
+      "question": "What is the determinant of a 3x3 identity matrix?",
+      "options": ["0", "1", "3", "-1"],
+      "answer": "1",
+      "explanation": "The determinant of any identity matrix is always 1."
+    }
+  ],
+  "General Aptitude": [
+    {
+      "id": "pyq_ga_1",
+      "year": "2024",
+      "question": "If 'APPLE' is coded as 'BQQMF', how is 'BANANA' coded?",
+      "options": ["CBOBOB", "CBPOBP", "CBPBPO", "CBOBOC"],
+      "answer": "CBOBOB",
+      "explanation": "Each letter is shifted by +1 (A->B, P->Q, etc.)."
+    }
+  ]
+}

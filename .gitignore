@@ -1,0 +1,44 @@
+# ==========================================
+# GATE Prediction System - Main .gitignore
+# ==========================================
+
+# Virtual Environments
+.venv/
+venv/
+ml-service/venv/
+
+# Python Cache & Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Java Maven Build Artifacts (Excluding Maven Wrapper)
+**/target/
+**/out/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS-generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+logs/

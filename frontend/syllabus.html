@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GATE Syllabus</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;}
+    header{background:#1e293b;border-bottom:1px solid #334155;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;}
+    header h1{color:#38bdf8;font-size:18px;}
+    .nav{display:flex;gap:10px;align-items:center;}
+    .nav a{color:#94a3b8;text-decoration:none;font-size:13px;padding:7px 14px;border-radius:7px;transition:all .2s;}
+    .nav a:hover{background:#334155;color:#f1f5f9;}
+    .nav .active{background:#334155;color:#f1f5f9;}
+
+    .hero{background:linear-gradient(135deg,#0c2a3a,#0f172a);border-bottom:1px solid #334155;padding:36px 28px;text-align:center;}
+    .hero h2{font-size:26px;font-weight:700;margin-bottom:8px;}
+    .hero p{color:#64748b;font-size:14px;margin-bottom:20px;}
+    .overall-progress{max-width:400px;margin:0 auto;}
+    .op-label{display:flex;justify-content:space-between;font-size:13px;color:#94a3b8;margin-bottom:6px;}
+    .op-bar{background:#1e293b;border-radius:8px;height:10px;}
+    .op-fill{background:linear-gradient(90deg,#38bdf8,#6ee7b7);height:10px;border-radius:8px;transition:width .5s;}
+
+    .main{max-width:1000px;margin:0 auto;padding:28px 20px;}
+
+    .subject-tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;}
+    .stab{padding:9px 20px;border:2px solid #334155;border-radius:8px;background:none;color:#94a3b8;cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;}
+    .stab:hover{border-color:#38bdf8;color:#38bdf8;}
+    .stab.active{background:#38bdf8;border-color:#38bdf8;color:#0f172a;}
+
+    .subject-section{display:none;}
+    .subject-section.show{display:block;}
+
+    .subject-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .subject-header h2{font-size:20px;font-weight:700;}
+    .sub-progress{font-size:13px;color:#38bdf8;font-weight:600;}
+
+    .sub-progress-bar{background:#1e293b;border-radius:4px;height:6px;margin-bottom:24px;}
+    .sub-progress-fill{background:#38bdf8;height:6px;border-radius:4px;transition:width .4s;}
+
+    .topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+
+    .topic-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:18px;transition:border .2s;}
+    .topic-card.completed{border-color:#16a34a;background:#0d1f0d;}
+    .topic-card:hover{border-color:#475569;}
+
+    .topic-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+    .topic-name{font-size:14px;font-weight:500;color:#f1f5f9;}
+    .topic-card.completed .topic-name{color:#6ee7b7;}
+
+    .imp-badge{font-size:10px;padding:2px 8px;border-radius:8px;font-weight:600;flex-shrink:0;margin-left:8px;}
+    .imp-high{background:#450a0a;color:#fca5a5;}
+    .imp-med {background:#422006;color:#fcd34d;}
+    .imp-low {background:#1e293b;color:#64748b;}
+
+    .topic-desc{font-size:12px;color:#64748b;margin-bottom:12px;line-height:1.5;}
+
+    .topic-subtopics{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+    .subtopic{font-size:11px;background:#0f172a;border:1px solid #334155;border-radius:4px;padding:2px 7px;color:#94a3b8;}
+
+    .topic-footer{display:flex;justify-content:space-between;align-items:center;}
+    .resource-link{font-size:12px;color:#38bdf8;text-decoration:none;transition:color .2s;}
+    .resource-link:hover{color:#0ea5e9;}
+
+    .check-btn{display:flex;align-items:center;gap:6px;background:none;border:1px solid #334155;border-radius:6px;padding:5px 10px;color:#64748b;cursor:pointer;font-size:12px;transition:all .2s;}
+    .check-btn:hover{border-color:#16a34a;color:#22c55e;}
+    .topic-card.completed .check-btn{background:#064e3b;border-color:#16a34a;color:#6ee7b7;}
+
+    .checkmark{width:14px;height:14px;border:2px solid currentColor;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;}
+
+    .tips-section{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:24px;margin-top:28px;}
+    .tips-section h3{font-size:15px;color:#f1f5f9;margin-bottom:16px;}
+    .tips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    .tip{background:#0f172a;border-radius:8px;padding:14px;}
+    .tip-icon{font-size:20px;margin-bottom:8px;}
+    .tip h4{font-size:13px;color:#f1f5f9;margin-bottom:4px;}
+    .tip p{font-size:12px;color:#64748b;line-height:1.5;}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>GATE Syllabus</h1>
+  <div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="test.html">Mock Tests</a>
+    <a href="syllabus.html" class="active">Syllabus</a>
+  </div>
+</header>
+
+<div class="hero">
+  <h2>GATE CSE Syllabus 2025</h2>
+  <p>Track your preparation topic by topic. Mark completed topics to monitor progress.</p>
+  <div class="overall-progress">
+    <div class="op-label">
+      <span>Overall Progress</span>
+      <span id="overallPct">0%</span>
+    </div>
+    <div class="op-bar">
+      <div class="op-fill" id="overallFill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="subject-tabs">
+    <button class="stab active" onclick="showSubject('cs')">Computer Science</button>
+    <button class="stab" onclick="showSubject('maths')">Engineering Mathematics</button>
+    <button class="stab" onclick="showSubject('aptitude')">General Aptitude</button>
+  </div>
+
+  <!-- CS Section -->
+  <div id="sec-cs" class="subject-section show">
+    <div class="subject-header">
+      <h2>Computer Science & IT</h2>
+      <div class="sub-progress" id="cs-prog">0 / 10 topics done</div>
+    </div>
+    <div class="sub-progress-bar">
+      <div class="sub-progress-fill" id="cs-fill" style="width:0%"></div>
+    </div>
+    <div class="topic-grid" id="cs-topics"></div>
+  </div>
+
+  <!-- Maths Section -->
+  <div id="sec-maths" class="subject-section">
+    <div class="subject-header">
+      <h2>Engineering Mathematics</h2>
+      <div class="sub-progress" id="maths-prog">0 / 7 topics done</div>
+    </div>
+    <div class="sub-progress-bar">
+      <div class="sub-progress-fill" id="maths-fill" style="width:0%"></div>
+    </div>
+    <div class="topic-grid" id="maths-topics"></div>
+  </div>
+
+  <!-- Aptitude Section -->
+  <div id="sec-aptitude" class="subject-section">
+    <div class="subject-header">
+      <h2>General Aptitude</h2>
+      <div class="sub-progress" id="aptitude-prog">0 / 6 topics done</div>
+    </div>
+    <div class="sub-progress-bar">
+      <div class="sub-progress-fill" id="aptitude-fill" style="width:0%"></div>
+    </div>
+    <div class="topic-grid" id="aptitude-topics"></div>
+  </div>
+
+  <div class="tips-section">
+    <h3>Preparation Tips</h3>
+    <div class="tips-grid">
+      <div class="tip">
+        <div class="tip-icon">&#128197;</div>
+        <h4>Make a study plan</h4>
+        <p>Allocate time based on topic weightage. High importance topics need more revision cycles.</p>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">&#128221;</div>
+        <h4>Practice previous papers</h4>
+        <p>Last 10 years GATE papers are the best resource. Aim to solve each paper in 3 hours.</p>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">&#9200;</div>
+        <h4>Time management</h4>
+        <p>Spend max 3 min on 1-mark questions, 6 min on 2-mark questions. Skip if stuck.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SYLLABUS = {
+  cs: [
+    { id:'cs1', name:'Data Structures', importance:'high',
+      desc:'Arrays, linked lists, stacks, queues, trees, graphs, heaps',
+      subtopics:['Arrays','Linked List','Stack','Queue','BST','Heap','Graph'],
+      link:'https://nptel.ac.in/courses/106/102/106102064/' },
+    { id:'cs2', name:'Algorithms', importance:'high',
+      desc:'Sorting, searching, divide & conquer, greedy, dynamic programming',
+      subtopics:['Sorting','Binary Search','DP','Greedy','Graph Algorithms'],
+      link:'https://nptel.ac.in/courses/106/101/106101060/' },
+    { id:'cs3', name:'Operating Systems', importance:'high',
+      desc:'Process management, memory management, file systems, deadlocks',
+      subtopics:['Scheduling','Deadlock','Memory','Virtual Memory','File System'],
+      link:'https://nptel.ac.in/courses/106/105/106105080/' },
+    { id:'cs4', name:'DBMS', importance:'high',
+      desc:'ER model, relational algebra, SQL, normalization, transactions',
+      subtopics:['ER Model','SQL','Normalization','Transactions','Indexing'],
+      link:'https://nptel.ac.in/courses/106/105/106105175/' },
+    { id:'cs5', name:'Computer Networks', importance:'high',
+      desc:'OSI model, TCP/IP, routing, congestion control, application layer',
+      subtopics:['OSI Model','TCP/IP','Routing','DNS','HTTP','IPv4/IPv6'],
+      link:'https://nptel.ac.in/courses/106/105/106105081/' },
+    { id:'cs6', name:'Theory of Computation', importance:'med',
+      desc:'Finite automata, regular languages, CFG, Turing machines',
+      subtopics:['DFA/NFA','Regular Expressions','CFG','PDA','Turing Machine'],
+      link:'https://nptel.ac.in/courses/106/104/106104028/' },
+    { id:'cs7', name:'Compiler Design', importance:'med',
+      desc:'Lexical analysis, parsing, syntax-directed translation, code generation',
+      subtopics:['Lexical Analysis','Parsing','SDT','Code Generation'],
+      link:'https://nptel.ac.in/courses/106/105/106105175/' },
+    { id:'cs8', name:'Computer Organization', importance:'med',
+      desc:'Machine instructions, ALU, memory hierarchy, I/O organization',
+      subtopics:['ALU','Pipelining','Cache','Memory Hierarchy','I/O'],
+      link:'https://nptel.ac.in/courses/106/105/106105163/' },
+    { id:'cs9', name:'Digital Logic', importance:'low',
+      desc:'Boolean algebra, combinational circuits, sequential circuits',
+      subtopics:['Boolean Algebra','K-Map','Flip Flops','Counters','Multiplexers'],
+      link:'https://nptel.ac.in/courses/106/105/106105080/' },
+    { id:'cs10', name:'Programming in C', importance:'low',
+      desc:'Recursion, pointers, structures, dynamic memory allocation',
+      subtopics:['Pointers','Recursion','Structures','Memory Allocation'],
+      link:'https://nptel.ac.in/courses/106/105/106105171/' }
+  ],
+  maths: [
+    { id:'m1', name:'Linear Algebra', importance:'high',
+      desc:'Matrices, determinants, eigenvalues, vector spaces',
+      subtopics:['Matrices','Determinants','Eigenvalues','Rank','Vector Spaces'],
+      link:'https://nptel.ac.in/courses/111/107/111107108/' },
+    { id:'m2', name:'Calculus', importance:'high',
+      desc:'Limits, continuity, differentiation, integration, sequences and series',
+      subtopics:['Limits','Derivatives','Integration','Series','Partial Derivatives'],
+      link:'https://nptel.ac.in/courses/111/107/111107108/' },
+    { id:'m3', name:'Probability & Statistics', importance:'high',
+      desc:'Random variables, distributions, mean, variance, conditional probability',
+      subtopics:['Probability','Random Variables','Distributions','Mean/Variance'],
+      link:'https://nptel.ac.in/courses/111/105/111105090/' },
+    { id:'m4', name:'Discrete Mathematics', importance:'high',
+      desc:'Propositional logic, set theory, graph theory, combinatorics',
+      subtopics:['Logic','Set Theory','Graph Theory','Combinatorics','Relations'],
+      link:'https://nptel.ac.in/courses/106/106/106106183/' },
+    { id:'m5', name:'Differential Equations', importance:'med',
+      desc:'First and higher order ODEs, Laplace transforms',
+      subtopics:['ODE','PDE','Laplace Transform'],
+      link:'https://nptel.ac.in/courses/111/107/111107108/' },
+    { id:'m6', name:'Complex Analysis', importance:'low',
+      desc:'Complex numbers, analytic functions, Cauchy theorem',
+      subtopics:['Complex Numbers','Analytic Functions','Residues'],
+      link:'https://nptel.ac.in/courses/111/107/111107108/' },
+    { id:'m7', name:'Numerical Methods', importance:'low',
+      desc:'Numerical integration, interpolation, root finding methods',
+      subtopics:['Newton-Raphson','Numerical Integration','Interpolation'],
+      link:'https://nptel.ac.in/courses/111/107/111107108/' }
+  ],
+  aptitude: [
+    { id:'a1', name:'Quantitative Aptitude', importance:'high',
+      desc:'Arithmetic, algebra, percentages, ratios, time-speed-distance',
+      subtopics:['Arithmetic','Percentages','Ratios','Time-Speed','Profit-Loss'],
+      link:'https://www.youtube.com/results?search_query=quantitative+aptitude+gate' },
+    { id:'a2', name:'Logical Reasoning', importance:'high',
+      desc:'Series, analogies, coding-decoding, blood relations, syllogisms',
+      subtopics:['Series','Analogies','Coding','Blood Relations','Syllogisms'],
+      link:'https://www.youtube.com/results?search_query=logical+reasoning+gate' },
+    { id:'a3', name:'Verbal Ability', importance:'high',
+      desc:'English grammar, vocabulary, reading comprehension, sentence correction',
+      subtopics:['Grammar','Vocabulary','Comprehension','Sentence Correction'],
+      link:'https://www.youtube.com/results?search_query=verbal+ability+gate' },
+    { id:'a4', name:'Data Interpretation', importance:'med',
+      desc:'Bar charts, pie charts, tables, line graphs',
+      subtopics:['Bar Charts','Pie Charts','Tables','Line Graphs'],
+      link:'https://www.youtube.com/results?search_query=data+interpretation+gate' },
+    { id:'a5', name:'Spatial Aptitude', importance:'low',
+      desc:'Figures, mirror images, paper folding, 3D shapes',
+      subtopics:['Mirror Images','Paper Folding','3D Shapes'],
+      link:'https://www.youtube.com/results?search_query=spatial+aptitude+gate' },
+    { id:'a6', name:'Analytical Aptitude', importance:'med',
+      desc:'Puzzles, seating arrangement, direction sense',
+      subtopics:['Puzzles','Seating Arrangement','Direction Sense'],
+      link:'https://www.youtube.com/results?search_query=analytical+aptitude+gate' }
+  ]
+};
+
+// Load completed topics from localStorage
+let completed = JSON.parse(
+  localStorage.getItem('gate_completed') || '{}');
+
+function renderTopics(subjectKey) {
+  const topics   = SYLLABUS[subjectKey];
+  const container = document.getElementById(subjectKey + '-topics');
+
+  container.innerHTML = topics.map(t => {
+    const done = completed[t.id] || false;
+    const impClass = t.importance === 'high' ? 'imp-high' :
+                     t.importance === 'med'  ? 'imp-med'  : 'imp-low';
+    const impText  = t.importance === 'high' ? 'High weight' :
+                     t.importance === 'med'  ? 'Medium'      : 'Low weight';
+    return `
+      <div class="topic-card ${done ? 'completed' : ''}" id="card-${t.id}">
+        <div class="topic-top">
+          <div class="topic-name">${t.name}</div>
+          <span class="imp-badge ${impClass}">${impText}</span>
+        </div>
+        <div class="topic-desc">${t.desc}</div>
+        <div class="topic-subtopics">
+          ${t.subtopics.map(s =>
+            `<span class="subtopic">${s}</span>`).join('')}
+        </div>
+        <div class="topic-footer">
+          <a href="${t.link}" target="_blank"
+             class="resource-link">Study resource</a>
+          <button class="check-btn" onclick="toggleDone('${t.id}','${subjectKey}')">
+            <div class="checkmark">${done ? '&#10003;' : ''}</div>
+            ${done ? 'Completed' : 'Mark done'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateSubjectProgress(subjectKey);
+}
+
+function toggleDone(topicId, subjectKey) {
+  completed[topicId] = !completed[topicId];
+  localStorage.setItem('gate_completed', JSON.stringify(completed));
+  renderTopics(subjectKey);
+  updateOverallProgress();
+}
+
+function updateSubjectProgress(subjectKey) {
+  const topics = SYLLABUS[subjectKey];
+  const done   = topics.filter(t => completed[t.id]).length;
+  const total  = topics.length;
+  const pct    = Math.round((done / total) * 100);
+
+  document.getElementById(subjectKey + '-prog').textContent =
+    `${done} / ${total} topics done`;
+  document.getElementById(subjectKey + '-fill').style.width =
+    pct + '%';
+}
+
+function updateOverallProgress() {
+  const allTopics = [
+    ...SYLLABUS.cs,
+    ...SYLLABUS.maths,
+    ...SYLLABUS.aptitude
+  ];
+  const done  = allTopics.filter(t => completed[t.id]).length;
+  const total = allTopics.length;
+  const pct   = Math.round((done / total) * 100);
+  document.getElementById('overallPct').textContent  = pct + '%';
+  document.getElementById('overallFill').style.width = pct + '%';
+}
+
+function showSubject(key) {
+  document.querySelectorAll('.subject-section')
+    .forEach(s => s.classList.remove('show'));
+  document.getElementById('sec-' + key).classList.add('show');
+  document.querySelectorAll('.stab').forEach((btn, i) => {
+    btn.classList.toggle('active',
+      ['cs','maths','aptitude'][i] === key);
+  });
+}
+
+// Initial render
+['cs','maths','aptitude'].forEach(renderTopics);
+updateOverallProgress();
+</script>
+</body>
+<script src="chatbot.js"></script>
+</html>
