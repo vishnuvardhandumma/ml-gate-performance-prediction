@@ -32,12 +32,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException(
-            Exception ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("message", "Something went wrong");
-        error.put("detail", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
+   @ExceptionHandler(Exception.class)
+public ResponseEntity<Map<String, String>> handleGenericException(
+        Exception ex) {
+
+    ex.printStackTrace();   // <-- Add this
+
+    Map<String, String> error = new HashMap<>();
+    error.put("message", "Something went wrong");
+    error.put("detail", ex.getMessage());
+
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+}
 }
