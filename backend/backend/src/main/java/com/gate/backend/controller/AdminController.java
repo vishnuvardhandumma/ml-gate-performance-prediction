@@ -73,11 +73,16 @@ public class AdminController {
     }
 
     @PostMapping("/questions/upload")
-    public ResponseEntity<Map<String, String>> uploadExcel(
-            @RequestParam("file") MultipartFile file) {
-        String result = questionService.importFromExcel(file);
-        return ResponseEntity.ok(Map.of("message", result));
-    }
+public ResponseEntity<Map<String, String>> uploadExcel(
+        @RequestParam("file") MultipartFile file) {
+
+    System.out.println("========== UPLOAD HIT ==========");
+    System.out.println(file.getOriginalFilename());
+
+    String result = questionService.importFromExcel(file);
+
+    return ResponseEntity.ok(Map.of("message", result));
+}
 
     @PostMapping("/mocktest/{mockTestNumber}/upload")
     public ResponseEntity<Map<String, String>> uploadExcelForMockTest(
