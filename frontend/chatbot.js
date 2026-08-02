@@ -25,7 +25,7 @@ const RESPONSES = {
     patterns: ['previous year','question paper','pyq','past paper','previous paper','old paper','papers'],
     reply: async () => {
       try {
-        const res = await fetch(`http://localhost:5000/pyq/branches`);
+        const res = await fetch(`https://gate-performance-prediction-production.up.railway.app/pyq/branches`);
         const data = await res.json();
         if (data.branches && data.branches.length > 0) {
             currentBranches = data.branches;
@@ -146,7 +146,7 @@ async function getResponse(input) {
             if (idx >= 0 && idx < currentPyqFiles.length) {
                 foundAny = true;
                 const f = currentPyqFiles[idx];
-                const url = `http://localhost:5000/pyq/download?filename=${encodeURIComponent(f)}`;
+                const url = `https://gate-performance-prediction-production.up.railway.app/pyq/download?filename=${encodeURIComponent(f)}`;
                 reply += `📄 **${f}**<br><a href="${url}" target="_blank" style="display:inline-block; margin:4px 0 12px 0; padding:6px 12px; background: #38bdf8; color: #0f172a; text-decoration: none; border-radius: 4px; font-weight:bold; font-size:12px;">Download PDF</a><br>\n`;
             }
         });
