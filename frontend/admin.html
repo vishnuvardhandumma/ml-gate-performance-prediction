@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GATE Admin Panel</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #f1f5f9; min-height: 100vh; }
+
+    header { background: #1e293b; border-bottom: 1px solid #334155; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { color: #38bdf8; font-size: 20px; }
+    .back-btn { color: #94a3b8; text-decoration: none; font-size: 14px; padding: 8px 16px; border: 1px solid #334155; border-radius: 8px; }
+
+    .main { max-width: 1000px; margin: 32px auto; padding: 0 20px; }
+
+    .section { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 28px; margin-bottom: 24px; }
+    .section h2 { font-size: 16px; color: #f1f5f9; margin-bottom: 6px; }
+    .section p  { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+
+    .upload-area {
+      border: 2px dashed #334155;
+      border-radius: 10px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: border 0.2s;
+      margin-bottom: 16px;
+    }
+    .upload-area:hover { border-color: #38bdf8; }
+    .upload-area.dragover { border-color: #38bdf8; background: #0c2a3a; }
+
+    .upload-icon { font-size: 36px; margin-bottom: 12px; color: #38bdf8; }
+    .upload-area h3 { font-size: 15px; color: #f1f5f9; margin-bottom: 6px; }
+    .upload-area p  { font-size: 13px; color: #64748b; margin: 0; }
+
+    .file-input { display: none; }
+
+    .format-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 16px; }
+    .format-table th { background: #0f172a; padding: 8px 12px; text-align: left; color: #64748b; border: 1px solid #334155; }
+    .format-table td { padding: 8px 12px; border: 1px solid #1e293b; color: #94a3b8; }
+    .format-table tr:nth-child(even) td { background: #0f172a; }
+
+    .btn { padding: 11px 28px; background: #38bdf8; color: #0f172a; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: #0ea5e9; }
+    .btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    .btn-red { background: #ef4444; color: #fff; }
+    .btn-red:hover { background: #dc2626; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: 500; }
+    input, select, textarea { width: 100%; padding: 10px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f1f5f9; font-size: 13px; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: #38bdf8; }
+    textarea { resize: vertical; min-height: 80px; }
+    select option { background: #0f172a; }
+
+    .alert { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .alert.success { background: #064e3b; color: #6ee7b7; display: block; }
+    .alert.error   { background: #450a0a; color: #fca5a5; display: block; }
+    .alert.info    { background: #0c2a3a; color: #7dd3fc; display: block; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 20px; text-align: center; }
+    .stat-card .num { font-size: 32px; font-weight: 700; color: #38bdf8; }
+    .stat-card .lbl { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+    .q-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .q-table th { padding: 10px 12px; text-align: left; color: #64748b; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid #334155; }
+    .q-table td { padding: 10px 12px; border-bottom: 1px solid #1e293b; color: #f1f5f9; }
+    .q-table tr:hover td { background: #1e293b; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+    .badge-cs   { background: #1e3a5f; color: #7dd3fc; }
+    .badge-math { background: #1a3a2a; color: #6ee7b7; }
+    .badge-apt  { background: #3a2a10; color: #fcd34d; }
+    .badge-1m   { background: #1e293b; color: #94a3b8; }
+    .badge-2m   { background: #2a1e40; color: #c4b5fd; }
+    .del-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 13px; padding: 4px 8px; border-radius: 4px; }
+    .del-btn:hover { background: #450a0a; }
+    .edit-btn { background: none; border: none; color: #38bdf8; cursor: pointer; font-size: 13px; padding: 4px 8px; border-radius: 4px; margin-right: 4px; }
+    .edit-btn:hover { background: #0c2a3a; }
+
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); }
+    .modal.active { display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: #1e293b; border-radius: 14px; padding: 32px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; border: 1px solid #334155; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { font-size: 18px; color: #f1f5f9; }
+    .modal-close { background: none; border: none; color: #64748b; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px; }
+    .modal-close:hover { color: #f1f5f9; }
+
+    .tab-bar { display: flex; gap: 4px; margin-bottom: 24px; background: #0f172a; padding: 4px; border-radius: 8px; }
+    .tab-btn { flex: 1; padding: 9px; text-align: center; border: none; background: none; color: #64748b; cursor: pointer; border-radius: 6px; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+    .tab-btn.active { background: #38bdf8; color: #0f172a; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Admin Panel — Question Manager</h1>
+  <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+</header>
+
+<div class="main">
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="num" id="totalQ">--</div>
+      <div class="lbl">Total Questions</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="csQ">--</div>
+      <div class="lbl">Computer Science</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="mathQ">--</div>
+      <div class="lbl">Mathematics + Aptitude</div>
+    </div>
+  </div>
+
+  <!-- Mock Test Selection -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="selectMockTest(null, this)">Generic Pool</button>
+    <button class="tab-btn" onclick="selectMockTest(1, this)">Mock Test 1</button>
+    <button class="tab-btn" onclick="selectMockTest(2, this)">Mock Test 2</button>
+    <button class="tab-btn" onclick="selectMockTest(3, this)">Mock Test 3</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('upload')">Excel Upload</button>
+    <button class="tab-btn" onclick="switchTab('add')">Add Single Question</button>
+    <button class="tab-btn" onclick="switchTab('manage')">Manage Questions</button>
+  </div>
+
+  <!-- Upload Tab -->
+  <div id="tab-upload">
+    <div class="section">
+      <h2>Bulk Import via Excel</h2>
+      <p>Upload a .xlsx file to add multiple questions at once</p>
+
+      <div id="uploadAlert" class="alert"></div>
+
+      <div class="upload-area" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">&#8679;</div>
+        <h3>Click to select or drag & drop Excel file</h3>
+        <p>Only .xlsx files supported · Max 10MB</p>
+      </div>
+      <input type="file" id="fileInput" class="file-input" accept=".xlsx" onchange="handleFile(this.files[0])"/>
+
+      <div id="fileInfo" style="display:none;margin-bottom:16px;padding:12px;background:#0f172a;border-radius:8px;font-size:13px;color:#94a3b8;"></div>
+
+      <button class="btn" id="uploadBtn" disabled onclick="uploadFile()">Upload & Import</button>
+    </div>
+
+    <div class="section">
+      <h2>Required Excel Format</h2>
+      <p>Your Excel file must have these exact column headers in Row 1</p>
+      <table class="format-table">
+        <thead>
+          <tr><th>Column</th><th>Header</th><th>Example</th><th>Required</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>A</td><td>subject</td><td>Computer Science</td><td>Yes</td></tr>
+          <tr><td>B</td><td>topic</td><td>Data Structures</td><td>Yes</td></tr>
+          <tr><td>C</td><td>question_text</td><td>Which uses LIFO?</td><td>Yes</td></tr>
+          <tr><td>D</td><td>option_a</td><td>Queue</td><td>Yes</td></tr>
+          <tr><td>E</td><td>option_b</td><td>Stack</td><td>Yes</td></tr>
+          <tr><td>F</td><td>option_c</td><td>Array</td><td>Yes</td></tr>
+          <tr><td>G</td><td>option_d</td><td>Tree</td><td>Yes</td></tr>
+          <tr><td>H</td><td>correct_option</td><td>B</td><td>Yes</td></tr>
+          <tr><td>I</td><td>marks</td><td>1 or 2</td><td>Yes</td></tr>
+          <tr><td>J</td><td>difficulty</td><td>1, 2 or 3</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:#64748b">Subject must be exactly: <strong style="color:#38bdf8">Computer Science</strong> or <strong style="color:#38bdf8">Mathematics</strong> or <strong style="color:#38bdf8">General Aptitude</strong></p>
+    </div>
+  </div>
+
+  <!-- Add Single Question Tab -->
+  <div id="tab-add" style="display:none">
+    <div class="section">
+      <h2>Add Single Question</h2>
+      <p>Fill in the form to add one question at a time</p>
+
+      <div id="addAlert" class="alert"></div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="qSubject">
+            <option value="Computer Science">Computer Science</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="General Aptitude">General Aptitude</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Topic</label>
+          <input type="text" id="qTopic" placeholder="e.g. Data Structures"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Question Text</label>
+        <textarea id="qText" placeholder="Enter the question here..."></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Option A</label>
+          <input type="text" id="qA" placeholder="Option A"/>
+        </div>
+        <div class="form-group">
+          <label>Option B</label>
+          <input type="text" id="qB" placeholder="Option B"/>
+        </div>
+        <div class="form-group">
+          <label>Option C</label>
+          <input type="text" id="qC" placeholder="Option C"/>
+        </div>
+        <div class="form-group">
+          <label>Option D</label>
+          <input type="text" id="qD" placeholder="Option D"/>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="form-group">
+          <label>Correct Option</label>
+          <select id="qCorrect">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Marks</label>
+          <select id="qMarks">
+            <option value="1">1 Mark</option>
+            <option value="2">2 Marks</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Difficulty</label>
+          <select id="qDifficulty">
+            <option value="1">Easy</option>
+            <option value="2">Medium</option>
+            <option value="3">Hard</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Mock Test (optional)</label>
+        <select id="qMockTest">
+          <option value="">Generic Pool</option>
+          <option value="1">Mock Test 1</option>
+          <option value="2">Mock Test 2</option>
+          <option value="3">Mock Test 3</option>
+        </select>
+      </div>
+
+      <button class="btn" onclick="addQuestion()">Add Question</button>
+    </div>
+  </div>
+
+  <!-- Manage Tab -->
+  <div id="tab-manage" style="display:none">
+    <div class="section">
+      <h2>All Questions</h2>
+      <p>View and delete existing questions</p>
+      <div id="manageAlert" class="alert"></div>
+      <div id="questionTable">
+        <div style="text-align:center;padding:30px;color:#64748b">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Question</h2>
+        <button class="modal-close" onclick="closeEditModal()">×</button>
+      </div>
+      <div id="editAlert" class="alert"></div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="eSubject">
+            <option value="Computer Science">Computer Science</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="General Aptitude">General Aptitude</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Topic</label>
+          <input type="text" id="eTopic" placeholder="e.g. Data Structures"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Question Text</label>
+        <textarea id="eText" placeholder="Enter the question here..."></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Option A</label>
+          <input type="text" id="eA" placeholder="Option A"/>
+        </div>
+        <div class="form-group">
+          <label>Option B</label>
+          <input type="text" id="eB" placeholder="Option B"/>
+        </div>
+        <div class="form-group">
+          <label>Option C</label>
+          <input type="text" id="eC" placeholder="Option C"/>
+        </div>
+        <div class="form-group">
+          <label>Option D</label>
+          <input type="text" id="eD" placeholder="Option D"/>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="form-group">
+          <label>Correct Option</label>
+          <select id="eCorrect">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Marks</label>
+          <select id="eMarks">
+            <option value="1">1 Mark</option>
+            <option value="2">2 Marks</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Difficulty</label>
+          <select id="eDifficulty">
+            <option value="1">Easy</option>
+            <option value="2">Medium</option>
+            <option value="3">Hard</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Mock Test (optional)</label>
+        <select id="eMockTest">
+          <option value="">Generic Pool</option>
+          <option value="1">Mock Test 1</option>
+          <option value="2">Mock Test 2</option>
+          <option value="3">Mock Test 3</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn" onclick="saveEditedQuestion()" style="flex:1">Save Changes</button>
+        <button class="btn" style="background:#334155;color:#f1f5f9;flex:1;cursor:pointer" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+const role = localStorage.getItem("role");
+
+if (!token || role !== "ADMIN") {
+    alert("Unauthorized Access");
+    window.location.href = "index.html";
+}
+
+const API = 'http://localhost:8081/api/admin';
+let selectedFile = null;
+let editingQuestionId = null;
+let currentMockTest = null;  // null = generic pool, 1/2/3 = mock test number
+
+// Load stats on page load
+loadStats();
+
+function selectMockTest(mockTestNum, btn) {
+  currentMockTest = mockTestNum;
+  document.querySelectorAll('.tab-bar button').forEach((b, i) => {
+    if (i < 4) b.classList.toggle('active', b === btn);
+  });
+  loadStats();
+  loadQuestions();
+}
+
+function switchTab(tab) {
+  ['upload','add','manage'].forEach(t => {
+    document.getElementById('tab-' + t).style.display =
+      t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active',
+      ['upload','add','manage'][i] === tab);
+  });
+  if (tab === 'manage') loadQuestions();
+}
+
+async function loadStats() {
+  try {
+    // Get appropriate data based on current selection
+    let endpoint = `${API}/questions`;
+    if (currentMockTest !== null) {
+      endpoint = `${API}/mocktest/${currentMockTest}/questions`;
+    }
+
+    const res = await fetch(endpoint, {
+    headers: {
+        Authorization: "Bearer " + localStorage.getItem("token")
+    }
+});
+    const data = await res.json();
+    
+    document.getElementById('totalQ').textContent = data.length;
+    document.getElementById('csQ').textContent =
+      data.filter(q => q.subject === 'Computer Science').length;
+    document.getElementById('mathQ').textContent =
+      data.filter(q =>
+        q.subject === 'Mathematics' ||
+        q.subject === 'General Aptitude').length;
+  } catch(e) {
+    console.error('Stats error:', e);
+  }
+}
+
+// Drag and drop
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+});
+dropZone.addEventListener('dragleave', () =>
+  dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file) {
+  if (!file) return;
+  if (!file.name.endsWith('.xlsx')) {
+    showAlert('uploadAlert',
+      'Only .xlsx files are supported', 'error');
+    return;
+  }
+  selectedFile = file;
+  document.getElementById('fileInfo').style.display = 'block';
+  document.getElementById('fileInfo').textContent =
+    `Selected: ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  document.getElementById('uploadBtn').disabled = false;
+  showAlert('uploadAlert',
+    'File selected. Click Upload & Import to proceed.', 'info');
+}
+
+async function uploadFile() {
+  if (!selectedFile) return;
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true;
+  btn.textContent = 'Uploading...';
+
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+
+  // Choose endpoint based on current mock test
+  let endpoint = `${API}/questions/upload`;
+  if (currentMockTest !== null) {
+    endpoint = `${API}/mocktest/${currentMockTest}/upload`;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+
+const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+        Authorization: "Bearer " + token
+    },
+    body: formData
+});
+    const data = await res.json();
+
+    if (res.ok) {
+      showAlert('uploadAlert', data.message, 'success');
+      loadStats();
+      loadQuestions();
+      selectedFile = null;
+      document.getElementById('fileInfo').style.display = 'none';
+    } else {
+      showAlert('uploadAlert',
+        data.message || 'Upload failed', 'error');
+    }
+  } catch(e) {
+    showAlert('uploadAlert',
+      'Cannot connect to server: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Upload & Import';
+  }
+}
+
+async function addQuestion() {
+  const question = {
+    subject:       document.getElementById('qSubject').value,
+    topic:         document.getElementById('qTopic').value.trim(),
+    questionText:  document.getElementById('qText').value.trim(),
+    optionA:       document.getElementById('qA').value.trim(),
+    optionB:       document.getElementById('qB').value.trim(),
+    optionC:       document.getElementById('qC').value.trim(),
+    optionD:       document.getElementById('qD').value.trim(),
+    correctOption: document.getElementById('qCorrect').value,
+    marks:         parseInt(document.getElementById('qMarks').value),
+    difficulty:    parseInt(document.getElementById('qDifficulty').value),
+    mockTestNumber: document.getElementById('qMockTest').value 
+                    ? parseInt(document.getElementById('qMockTest').value) 
+                    : null
+  };
+
+  if (!question.questionText || !question.optionA ||
+      !question.optionB || !question.topic) {
+    showAlert('addAlert',
+      'Please fill in all required fields', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/questions`, {
+      method:  'POST',
+      headers: {
+    'Content-Type': 'application/json',
+    Authorization: "Bearer " + localStorage.getItem("token")
+},
+      body:    JSON.stringify(question)
+    });
+
+    if (res.ok) {
+      showAlert('addAlert',
+        'Question added successfully!', 'success');
+      loadStats();
+      clearForm();
+    } else {
+      showAlert('addAlert', 'Failed to add question', 'error');
+    }
+  } catch(e) {
+    showAlert('addAlert',
+      'Cannot connect to server', 'error');
+  }
+}
+
+async function loadQuestions() {
+  try {
+    // Get appropriate data based on current selection
+    let endpoint = `${API}/questions`;
+    if (currentMockTest !== null) {
+      endpoint = `${API}/mocktest/${currentMockTest}/questions`;
+    }
+
+    const res = await fetch(endpoint, {
+    headers: {
+        Authorization: "Bearer " + localStorage.getItem("token")
+    }
+});
+    const data = await res.json();
+    const container = document.getElementById('questionTable');
+
+    if (data.length === 0) {
+      const mockLabel = currentMockTest ? ` for Mock Test ${currentMockTest}` : '';
+      container.innerHTML =
+        `<div style="text-align:center;padding:30px;color:#64748b">No questions${mockLabel}. Upload an Excel file or add manually.</div>`;
+      return;
+    }
+
+    const subjectBadge = s => {
+      if (s === 'Computer Science')
+        return `<span class="badge badge-cs">CS</span>`;
+      if (s === 'Mathematics')
+        return `<span class="badge badge-math">Math</span>`;
+      return `<span class="badge badge-apt">Apt</span>`;
+    };
+
+    const rows = data.map(q => `
+      <tr>
+        <td>${q.id}</td>
+        <td>${subjectBadge(q.subject)}</td>
+        <td>${q.topic}</td>
+        <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          ${q.questionText}
+        </td>
+        <td><span class="badge ${q.marks === 2 ? 'badge-2m' : 'badge-1m'}">${q.marks}M</span></td>
+        <td>
+          <button class="edit-btn" onclick="openEditModal(${q.id})" title="Edit">Edit</button>
+          <button class="del-btn" onclick="deleteQuestion(${q.id})" title="Delete">Delete</button>
+        </td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <table class="q-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Subject</th><th>Topic</th>
+            <th>Question</th><th>Marks</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  } catch(e) {
+    document.getElementById('questionTable').innerHTML =
+      `<div style="color:#ef4444;padding:20px">Error: ${e.message}</div>`;
+  }
+}
+
+async function deleteQuestion(id) {
+  if (!confirm('Delete this question?')) return;
+  try {
+    await fetch(`${API}/questions/${id}`, {
+    method: 'DELETE',
+    headers: {
+        Authorization: "Bearer " + localStorage.getItem("token")
+    }
+});
+    showAlert('manageAlert', 'Question deleted', 'success');
+    loadQuestions();
+    loadStats();
+  } catch(e) {
+    showAlert('manageAlert', 'Delete failed', 'error');
+  }
+}
+
+function clearForm() {
+  ['qTopic','qText','qA','qB','qC','qD'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'alert ' + type;
+  setTimeout(() => el.className = 'alert', 5000);
+}
+
+async function openEditModal(questionId) {
+  try {
+    // Get from current selection (mock test or all)
+    let endpoint = `${API}/questions`;
+    if (currentMockTest !== null) {
+      endpoint = `${API}/mocktest/${currentMockTest}/questions`;
+    }
+    
+    const res = await fetch(endpoint, {
+    headers: {
+        Authorization: "Bearer " + localStorage.getItem("token")
+    }
+});
+    const data = await res.json();
+    const q = data.find(x => x.id === questionId);
+    
+    if (!q) {
+      alert('Question not found');
+      return;
+    }
+    
+    editingQuestionId = questionId;
+    document.getElementById('eSubject').value = q.subject;
+    document.getElementById('eTopic').value = q.topic;
+    document.getElementById('eText').value = q.questionText;
+    document.getElementById('eA').value = q.optionA;
+    document.getElementById('eB').value = q.optionB;
+    document.getElementById('eC').value = q.optionC;
+    document.getElementById('eD').value = q.optionD;
+    document.getElementById('eCorrect').value = q.correctOption;
+    document.getElementById('eMarks').value = q.marks;
+    document.getElementById('eDifficulty').value = q.difficulty;
+    document.getElementById('eMockTest').value = q.mockTestNumber || '';
+    document.getElementById('editAlert').className = 'alert';
+    
+    document.getElementById('editModal').classList.add('active');
+  } catch(e) {
+    alert('Failed to load question: ' + e.message);
+  }
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('active');
+  editingQuestionId = null;
+}
+
+async function saveEditedQuestion() {
+  if (editingQuestionId === null) return;
+  
+  const question = {
+    subject:       document.getElementById('eSubject').value,
+    topic:         document.getElementById('eTopic').value.trim(),
+    questionText:  document.getElementById('eText').value.trim(),
+    optionA:       document.getElementById('eA').value.trim(),
+    optionB:       document.getElementById('eB').value.trim(),
+    optionC:       document.getElementById('eC').value.trim(),
+    optionD:       document.getElementById('eD').value.trim(),
+    correctOption: document.getElementById('eCorrect').value,
+    marks:         parseInt(document.getElementById('eMarks').value),
+    difficulty:    parseInt(document.getElementById('eDifficulty').value),
+    mockTestNumber: document.getElementById('eMockTest').value 
+                    ? parseInt(document.getElementById('eMockTest').value) 
+                    : null
+  };
+
+  if (!question.questionText || !question.optionA || 
+      !question.optionB || !question.topic) {
+    showAlert('editAlert', 'Please fill in all required fields', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/questions/${editingQuestionId}`, {
+      method:  'PUT',
+      headers: {
+    'Content-Type': 'application/json',
+    Authorization: "Bearer " + localStorage.getItem("token")
+},
+      body:    JSON.stringify(question)
+    });
+
+    if (res.ok) {
+      showAlert('editAlert', 'Question updated successfully!', 'success');
+      setTimeout(() => {
+        closeEditModal();
+        loadQuestions();
+        loadStats();
+      }, 1500);
+    } else {
+      showAlert('editAlert', 'Failed to update question', 'error');
+    }
+  } catch(e) {
+    showAlert('editAlert', 'Cannot connect to server', 'error');
+  }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', (e) => {
+  const modal = document.getElementById('editModal');
+  if (e.target === modal) closeEditModal();
+});
+</script>
+</body>
+</html>

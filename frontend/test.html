@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GATE Mock Test</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#0f172a;color:#f1f5f9;min-height:100vh;}
+    header{background:#1e293b;border-bottom:1px solid #334155;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;}
+    header h1{color:#38bdf8;font-size:18px;}
+    .timer{background:#0f172a;border:2px solid #334155;padding:8px 20px;border-radius:8px;font-size:22px;font-weight:700;color:#fbbf24;font-family:monospace;}
+    .timer.urgent{color:#ef4444;border-color:#ef4444;animation:pulse 1s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+    .motivation-bar{background:#064e3b;color:#6ee7b7;text-align:center;padding:10px;font-size:13px;}
+
+    /* Selection */
+    .selection{max-width:800px;margin:48px auto;padding:0 20px;}
+    .sel-title{text-align:center;margin-bottom:36px;}
+    .sel-title h2{font-size:26px;font-weight:700;}
+    .sel-title p{color:#64748b;margin-top:6px;}
+    .mock-cards{display:flex;justify-content:center;margin-bottom:28px;}
+    .mock-card{background:#1e293b;border:2px solid #334155;border-radius:14px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;position:relative;}
+    .mock-card:hover{border-color:#38bdf8;transform:translateY(-2px);}
+    .mock-card .num{font-size:36px;font-weight:800;color:#38bdf8;margin-bottom:8px;}
+    .mock-card h3{font-size:15px;margin-bottom:10px;}
+    .mock-card .sections{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+    .mock-card .sec{font-size:11px;color:#64748b;display:flex;align-items:center;gap:6px;justify-content:center;}
+    .mock-card .info{font-size:11px;color:#38bdf8;font-weight:600;padding:4px 10px;background:#0c2a3a;border-radius:6px;display:inline-block;}
+    .prev-badge{position:absolute;top:10px;right:10px;background:#16a34a;color:#fff;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600;}
+
+    .rules-box{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px 24px;margin-bottom:20px;}
+    .rules-box h3{font-size:13px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;}
+    .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .rule{font-size:13px;color:#64748b;display:flex;gap:8px;}
+    .rdot{width:6px;height:6px;border-radius:50%;background:#38bdf8;margin-top:5px;flex-shrink:0;}
+
+    /* Previous attempt modal */
+    .prev-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;}
+    .prev-modal.show{display:flex;}
+    .prev-box{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:32px;max-width:420px;width:90%;text-align:center;}
+    .prev-box h3{font-size:20px;margin-bottom:6px;}
+    .prev-box p{color:#64748b;font-size:13px;margin-bottom:20px;}
+    .prev-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+    .prev-stat{background:#0f172a;border-radius:8px;padding:12px;}
+    .prev-stat .v{font-size:22px;font-weight:700;color:#38bdf8;}
+    .prev-stat .l{font-size:11px;color:#64748b;margin-top:2px;}
+    .prev-date{font-size:12px;color:#475569;margin-bottom:20px;}
+    .prev-btns{display:flex;gap:12px;}
+    .prev-btns button{flex:1;padding:12px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+    .btn-back{background:#334155;color:#f1f5f9;}
+    .btn-retake{background:#38bdf8;color:#0f172a;}
+
+    /* Exam layout */
+    .exam-layout{display:grid;grid-template-columns:1fr 260px;gap:16px;max-width:1100px;margin:16px auto;padding:0 16px;}
+    .question-panel{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:24px;}
+    .section-tabs{display:flex;gap:4px;margin-bottom:20px;background:#0f172a;padding:4px;border-radius:8px;}
+    .sec-tab{flex:1;padding:8px 6px;text-align:center;border:none;background:none;color:#64748b;cursor:pointer;border-radius:6px;font-size:12px;font-weight:500;transition:all .2s;}
+    .sec-tab.active{background:#38bdf8;color:#0f172a;}
+    .sec-tab.done{background:#064e3b;color:#6ee7b7;}
+    .q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+    .q-num{font-size:13px;color:#64748b;}
+    .q-marks-badge{font-size:12px;padding:3px 10px;border-radius:10px;font-weight:600;}
+    .m1{background:#1e3a5f;color:#7dd3fc;}
+    .m2{background:#2a1e40;color:#c4b5fd;}
+    .q-text{font-size:16px;line-height:1.7;margin-bottom:24px;}
+    .options{display:grid;gap:10px;}
+    .option{background:#0f172a;border:2px solid #334155;border-radius:10px;padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-size:14px;}
+    .option:hover{border-color:#38bdf8;}
+    .option.selected{border-color:#38bdf8;background:#0c2a3a;}
+    .opt-lbl{width:28px;height:28px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+    .option.selected .opt-lbl{background:#38bdf8;color:#0f172a;}
+    .q-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+    .btn{padding:9px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+    .btn-primary{background:#38bdf8;color:#0f172a;}
+    .btn-review{background:#422006;color:#fcd34d;}
+    .btn-clear{background:#0f172a;color:#94a3b8;border:1px solid #334155;}
+    .btn-submit-test{background:#16a34a;color:#fff;margin-left:auto;}
+
+    /* Palette */
+    .palette-panel{display:flex;flex-direction:column;gap:12px;}
+    .pal-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:16px;}
+    .pal-card h3{font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;}
+    .pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+    .pq{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:pointer;border:2px solid transparent;transition:all .2s;}
+    .pq.un{background:#0f172a;color:#64748b;border-color:#334155;}
+    .pq.an{background:#1e3a5f;color:#7dd3fc;border-color:#2563eb;}
+    .pq.rv{background:#422006;color:#fcd34d;border-color:#854d0e;}
+    .pq.cur{border-color:#38bdf8 !important;transform:scale(1.1);}
+    .progress-wrap{background:#0f172a;border-radius:4px;height:5px;margin-top:8px;}
+    .progress-fill{background:#38bdf8;height:5px;border-radius:4px;transition:width .3s;}
+    .prog-info{display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-top:4px;}
+
+    /* Submit modal */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;}
+    .modal-bg.show{display:flex;}
+    .modal{background:#1e293b;border:1px solid #334155;border-radius:14px;padding:28px;max-width:400px;width:90%;text-align:center;}
+    .modal h3{font-size:18px;margin-bottom:6px;}
+    .modal p{color:#64748b;font-size:13px;margin-bottom:20px;}
+    .modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+
+    /* TCS iON Calculator Styling */
+    #calc-container {
+        position: fixed;
+        top: 80px;
+        right: 40px;
+        width: 380px;
+        background: #ced4da;
+        border: 2px solid #6c757d;
+        border-radius: 8px;
+        z-index: 1000;
+        display: none;
+        user-select: none;
+        box-shadow: 10px 10px 20px rgba(0,0,0,0.5);
+    }
+    .calc-header {
+        background: linear-gradient(to bottom, #7d8894, #4a545e);
+        color: white;
+        padding: 5px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+        font-size: 13px;
+        font-weight: 600;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+    .calc-display-wrap {
+        padding: 10px;
+        background: #ced4da;
+    }
+    #calc-display {
+        background: #000;
+        color: #0f0;
+        width: 100%;
+        height: 50px;
+        text-align: right;
+        padding: 10px;
+        font-family: 'Courier New', monospace;
+        font-size: 24px;
+        border: inset 2px #adb5bd;
+        margin-bottom: 10px;
+        text-shadow: 0 0 5px #0f0;
+    }
+    .calc-buttons {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+        padding: 8px;
+        background: #ced4da;
+    }
+    .calc-btn {
+        background: #f8f9fa;
+        border: 1px solid #adb5bd;
+        padding: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: 0.1s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #334e68;
+    }
+    .calc-btn:active { background: #dee2e6; transform: translateY(1px); }
+    .calc-btn.op { background: #e9ecef; }
+    .calc-btn.num { background: #334e68; color: #fff; font-size: 16px; }
+    .calc-btn.action { background: #d97706; color: white; }
+    .calc-btn.scientific { font-size: 10px; padding: 12px 0; }
+    .calc-btn.active-mode { background: #38bdf8; color: #0f172a; }
+    .calc-close { cursor: pointer; font-size: 18px; line-height: 1; }
+    .ms{background:#0f172a;border-radius:8px;padding:10px;}
+    .ms .v{font-size:20px;font-weight:700;}
+    .ms .l{font-size:11px;color:#64748b;margin-top:2px;}
+    .modal-btns{display:flex;gap:10px;}
+    .modal-btns button{flex:1;padding:11px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+    .btn-back-modal{background:#334155;color:#f1f5f9;}
+    .btn-submit-modal{background:#16a34a;color:#fff;}
+
+    .loading{text-align:center;padding:80px 20px;}
+    .spinner{width:40px;height:40px;border:3px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* TCS iON GATE Calculator - High Fidelity OVERHAUL */
+    #calc-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        width: 530px;
+        background: #2c3e50;
+        border: 2px solid #34495e;
+        border-radius: 6px;
+        z-index: 2000;
+        display: none;
+        user-select: none;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        font-family: Arial, sans-serif;
+    }
+    .calc-header {
+        background: #1a252f;
+        color: white;
+        padding: 6px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: move;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    .calc-close { color: #e74c3c; cursor: pointer; font-size: 18px; line-height: 1; }
+    .calc-display-area { padding: 8px; background: #2c3e50; }
+    #calc-screen {
+        background: #ecf0f1;
+        border: none;
+        padding: 10px 15px;
+        text-align: right;
+        margin-bottom: 8px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 32px;
+        font-weight: bold;
+        color: #2c3e50;
+        border-radius: 4px;
+    }
+    .unit-toggle { display: flex; gap: 12px; margin-bottom: 8px; padding-left: 5px; }
+    .unit-toggle label { color: white; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    
+    .calc-grid-wrap { display: flex; gap: 6px; padding: 5px; }
+    .scientific-block { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; width: 55%; }
+    .standard-block { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 45%; }
+    
+    .c-btn {
+        background: #34495e;
+        color: white;
+        border: none;
+        padding: 9px 0;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.1s;
+        text-align: center;
+    }
+    .c-btn:hover { background: #4e6a8e; }
+    .c-btn.num { background: #ecf0f1; color: #2c3e50; font-size: 14px; }
+    .c-btn.mem { background: #95a5a6; color: #fff; }
+    .c-btn.op-special { background: #f39c12; color: white; }
+    .c-btn.clear-btn { background: #e74c3c; color: white; }
+    .c-btn.equal-btn { background: #27ae60; color: white; font-size: 16px; }
+    .c-btn.bracket { background: #7f8c8d; color: white; }
+    
+    .mem-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 0 5px 6px; }
+
+    #calcBtn.calc-active {
+        background: #38bdf8 !important;
+        color: #0f172a !important;
+        font-weight: bold;
+        border: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="motivation-bar" id="motBar"></div>
+
+<header>
+  <h1>GATE Mock Tests</h1>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <button class="btn btn-primary" id="calcBtn" onclick="toggleCalc()" style="display:none; padding: 6px 12px; font-size: 12px;">Calculator</button>
+    <div class="timer" id="timerBox" style="display:none">90:00</div>
+    <span style="color:#64748b;font-size:13px" id="hName"></span>
+  </div>
+</header>
+
+<!-- TCS iON Calculator Widget -->
+<div id="calc-container">
+    <div class="calc-header" id="calc-handle">
+        <span>TCS iON Virtual Calculator</span>
+        <span class="calc-close" onclick="toggleCalc()">&times;</span>
+    </div>
+    <div class="calc-display-area">
+        <div id="calc-screen">0</div>
+        
+        <div class="unit-toggle">
+            <label><input type="radio" name="u" id="cDeg" checked onchange="setUnit('deg')"> Deg</label>
+            <label><input type="radio" name="u" id="cRad" onchange="setUnit('rad')"> Rad</label>
+        </div>
+
+        <div class="mem-row">
+            <button class="c-btn mem">MC</button>
+            <button class="c-btn mem">MR</button>
+            <button class="c-btn mem">MS</button>
+            <button class="c-btn mem">M+</button>
+            <button class="c-btn mem">M-</button>
+        </div>
+
+        <div class="calc-grid-wrap">
+            <div class="scientific-block">
+                <button class="c-btn" onclick="scFn('abs')">abs</button>
+                <button class="c-btn" onclick="scFn('exp')">exp</button>
+                <button class="c-btn" onclick="scFn('ln')">ln</button>
+                <button class="c-btn" onclick="scFn('log')">log10</button>
+                <button class="c-btn" onclick="scFn('fact')">n!</button>
+
+                <button class="c-btn" onclick="scFn('sin')">sin</button>
+                <button class="c-btn" onclick="scFn('cos')">cos</button>
+                <button class="c-btn" onclick="scFn('tan')">tan</button>
+                <button class="c-btn" onclick="scFn('asin')">asin</button>
+                <button class="c-btn" onclick="scFn('acos')">acos</button>
+
+                <button class="c-btn" onclick="scFn('atan')">atan</button>
+                <button class="c-btn" onclick="scFn('sqrt')">sqrt</button>
+                <button class="c-btn" onclick="scFn('inv')">1/x</button>
+                <button class="c-btn" onclick="scFn('pow2')">x²</button>
+                <button class="c-btn" onclick="scFn('pow3')">x³</button>
+
+                <button class="c-btn" onclick="scFn('pi')">π</button>
+                <button class="c-btn" onclick="scFn('e')">e</button>
+                <button class="c-btn" onclick="scFn('round')">round</button>
+                <button class="c-btn" onclick="scFn('ceil')">ceil</button>
+                <button class="c-btn" onclick="scFn('floor')">floor</button>
+            </div>
+            
+            <div class="standard-block">
+                <button class="c-btn clear-btn" onclick="cAll()">C</button>
+                <button class="c-btn clear-btn" onclick="cInp('bs')">←</button>
+                <button class="c-btn op-special" onclick="cInp('/')">÷</button>
+                <button class="c-btn op-special" onclick="cInp('*')">&times;</button>
+
+                <button class="c-btn num" onclick="cNum('7')">7</button>
+                <button class="c-btn num" onclick="cNum('8')">8</button>
+                <button class="c-btn num" onclick="cNum('9')">9</button>
+                <button class="c-btn op-special" onclick="cInp('-')">&minus;</button>
+
+                <button class="c-btn num" onclick="cNum('4')">4</button>
+                <button class="c-btn num" onclick="cNum('5')">5</button>
+                <button class="c-btn num" onclick="cNum('6')">6</button>
+                <button class="c-btn op-special" onclick="cInp('+')">+</button>
+
+                <button class="c-btn num" onclick="cNum('1')">1</button>
+                <button class="c-btn num" onclick="cNum('2')">2</button>
+                <button class="c-btn num" onclick="cNum('3')">3</button>
+                <button class="c-btn bracket" onclick="cNum('(')">(</button>
+
+                <button class="c-btn num" onclick="cNum('0')">0</button>
+                <button class="c-btn num" onclick="cNum('.')">.</button>
+                <button class="c-btn bracket" onclick="cNum(')')">)</button>
+                <button class="c-btn equal-btn" onclick="cExec()">=</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Selection Screen -->
+<div id="selScreen">
+  <div class="selection">
+    <div class="sel-title">
+      <h2>GATE Mock Test</h2>
+      <p>A comprehensive mock test covering CS, Mathematics and Aptitude</p>
+    </div>
+
+    <div class="mock-cards" id="mockCards">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+
+    <div class="rules-box">
+      <h3>Exam Pattern</h3>
+      <div class="rules-grid">
+        <div class="rule"><div class="rdot"></div>30 questions per test — 10 per subject</div>
+        <div class="rule"><div class="rdot"></div>90 minutes total time</div>
+        <div class="rule"><div class="rdot"></div>3 sections: CS → Maths → Aptitude</div>
+        <div class="rule"><div class="rdot"></div>1-mark MCQ: -1/3 for wrong answer</div>
+        <div class="rule"><div class="rdot"></div>2-mark MCQ: -2/3 for wrong answer</div>
+        <div class="rule"><div class="rdot"></div>No penalty for unattempted questions</div>
+        <div class="rule"><div class="rdot"></div>Navigate freely between sections</div>
+        <div class="rule"><div class="rdot"></div>Auto-submit when time expires</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Previous Attempt Modal -->
+<div class="prev-modal" id="prevModal">
+  <div class="prev-box">
+    <h3 id="prevTitle">Mock Test 1</h3>
+    <p>You have already attempted this test</p>
+    <div class="prev-stats">
+      <div class="prev-stat">
+        <div class="v" id="prevAcc">--</div>
+        <div class="l">Accuracy</div>
+      </div>
+      <div class="prev-stat">
+        <div class="v" id="prevCorrect">--</div>
+        <div class="l">Correct</div>
+      </div>
+      <div class="prev-stat">
+        <div class="v" id="prevTotal">--</div>
+        <div class="l">Total Qs</div>
+      </div>
+    </div>
+    <div class="prev-date" id="prevDate"></div>
+    <div class="prev-btns">
+      <button class="btn-back" onclick="closePrevModal()">Go Back</button>
+      <button class="btn-retake" onclick="proceedWithTest()">Retake Test</button>
+    </div>
+  </div>
+</div>
+
+<!-- Exam Screen -->
+<div id="examScreen" style="display:none">
+  <div class="exam-layout">
+    <div class="question-panel">
+      <div class="section-tabs" id="secTabs"></div>
+      <div class="q-header">
+        <div class="q-num" id="qNumLbl">Q1 of 10</div>
+        <div class="q-marks-badge m1" id="qMrkLbl">1 Mark</div>
+      </div>
+      <div class="q-text" id="qTextEl"></div>
+      <div class="options" id="optsEl"></div>
+      <div class="q-actions">
+        <button class="btn btn-clear" onclick="clearAns()">Clear</button>
+        <button class="btn btn-review" onclick="markRev()">Mark Review</button>
+        <button class="btn btn-primary" id="prevBtn" onclick="prevQ()">Previous</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextQ()">Next</button>
+        <button class="btn btn-submit-test" onclick="showSubmit()">Submit Test</button>
+      </div>
+    </div>
+
+    <div class="palette-panel">
+      <div class="pal-card">
+        <h3 id="palSecLabel">Section 1</h3>
+        <div class="pal-grid" id="palGrid"></div>
+      </div>
+      <div class="pal-card">
+        <h3>Progress</h3>
+        <div class="progress-wrap">
+          <div class="progress-fill" id="progFill" style="width:0%"></div>
+        </div>
+        <div class="prog-info">
+          <span id="ansCount">0 answered</span>
+          <span id="remCount">30 left</span>
+        </div>
+      </div>
+      <div class="pal-card">
+        <h3>Legend</h3>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b">
+            <div style="width:12px;height:12px;border-radius:3px;background:#0f172a;border:2px solid #334155"></div>Not visited
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b">
+            <div style="width:12px;height:12px;border-radius:3px;background:#1e3a5f;border:2px solid #2563eb"></div>Answered
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b">
+            <div style="width:12px;height:12px;border-radius:3px;background:#422006;border:2px solid #854d0e"></div>For review
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loadScreen" style="display:none">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p id="loadMsg" style="color:#64748b">Loading...</p>
+  </div>
+</div>
+
+<!-- Submit Modal -->
+<div class="modal-bg" id="submitModal">
+  <div class="modal">
+    <h3>Submit Test?</h3>
+    <p>You cannot change answers after submitting</p>
+    <div class="modal-stats">
+      <div class="ms"><div class="v" id="mAns" style="color:#38bdf8">0</div><div class="l">Answered</div></div>
+      <div class="ms"><div class="v" id="mSkip" style="color:#64748b">0</div><div class="l">Skipped</div></div>
+      <div class="ms"><div class="v" id="mRev" style="color:#fbbf24">0</div><div class="l">Review</div></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-back-modal" onclick="closeSubmit()">Go Back</button>
+      <button class="btn-submit-modal" onclick="submitTest()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API   = 'http://localhost:8081/api';
+const token = localStorage.getItem('token');
+if (!token) window.location.href = 'index.html';
+document.getElementById('hName').textContent =
+  localStorage.getItem('name') || '';
+
+const MOTIVATIONS = [
+  "Every question you answer brings you closer to your GATE rank!",
+  "Stay focused — your preparation shows in every answer.",
+  "Hard work today, AIR 1 tomorrow. You've got this!",
+  "Take a deep breath. Read carefully. You know this.",
+  "GATE is a marathon, not a sprint. Stay consistent!"
+];
+document.getElementById('motBar').textContent =
+  MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)];
+
+let currentMockNum  = null;
+let allSections     = [];
+let currentSecIdx   = 0;
+let currentQIdx     = 0;
+let userAnswers     = {};
+let reviewSet       = new Set();
+let secondsLeft     = 90 * 60;
+let timerInterval   = null;
+let pendingMockNum  = null;
+
+// Load mock test cards
+async function loadMockCards() {
+  const container = document.getElementById('mockCards');
+  container.innerHTML = `
+    <div class="mock-card" onclick="selectMock(1)" id="card-1" style="max-width: 400px; margin: 0 auto;">
+      <div class="num">01</div>
+      <h3>Full GATE Mock Test</h3>
+      <div class="sections">
+        <div class="sec">Computer Science — 10 Qs</div>
+        <div class="sec">Mathematics — 10 Qs</div>
+        <div class="sec">General Aptitude — 10 Qs</div>
+      </div>
+      <div class="info">30 Qs · 90 mins · All Subjects</div>
+    </div>
+  `;
+}
+
+loadMockCards();
+
+async function selectMock(num) {
+  pendingMockNum = num;
+  show('loadScreen');
+  document.getElementById('loadMsg').textContent =
+    'Loading Mock Test ' + num + '...';
+
+  try {
+    const res = await fetch(`${API}/tests/mocktest/${num}`, {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const data = await res.json();
+
+    hide('loadScreen');
+
+    if (data.previousAttempt) {
+      // Show previous attempt modal
+      document.getElementById('prevTitle').textContent =
+        'Mock Test ' + num;
+      document.getElementById('prevAcc').textContent =
+        data.previousAttempt.accuracy + '%';
+      document.getElementById('prevCorrect').textContent =
+        data.previousAttempt.correctAnswers;
+      document.getElementById('prevTotal').textContent =
+        data.previousAttempt.totalQuestions;
+      document.getElementById('prevDate').textContent =
+        'Last attempted: ' + data.previousAttempt.takenAt;
+      document.getElementById('prevModal').classList.add('show');
+      window._pendingTestData = data;
+    } else {
+      startExam(data, num);
+    }
+  } catch(e) {
+    hide('loadScreen');
+    alert('Error loading test: ' + e.message);
+  }
+}
+
+function closePrevModal() {
+  document.getElementById('prevModal').classList.remove('show');
+  pendingMockNum = null;
+}
+
+function proceedWithTest() {
+  document.getElementById('prevModal').classList.remove('show');
+  startExam(window._pendingTestData, pendingMockNum);
+}
+
+function startExam(data, num) {
+  currentMockNum = num;
+  allSections    = data.sections;
+  currentSecIdx  = 0;
+  currentQIdx    = 0;
+  userAnswers    = {};
+  reviewSet.clear();
+
+  hide('selScreen');
+  show('examScreen');
+  document.getElementById('timerBox').style.display = 'block';
+
+  buildSectionTabs();
+  buildPalette();
+  showQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  secondsLeft   = 90 * 60;
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = String(Math.floor(secondsLeft / 60)).padStart(2,'0');
+    const s = String(secondsLeft % 60).padStart(2,'0');
+    const box = document.getElementById('timerBox');
+    box.textContent = `${m}:${s}`;
+    if (secondsLeft <= 300) box.classList.add('urgent');
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitTest(); }
+  }, 1000);
+}
+
+function buildSectionTabs() {
+  const tabs = allSections.map((sec, i) => `
+    <button class="sec-tab ${i === 0 ? 'active' : ''}"
+            id="tab-${i}" onclick="switchSection(${i})">
+      ${sec.subject.split(' ')[0]} (${sec.questionCount})
+    </button>
+  `).join('');
+  document.getElementById('secTabs').innerHTML = tabs;
+}
+
+function switchSection(idx) {
+  currentSecIdx = idx;
+  currentQIdx   = 0;
+  document.querySelectorAll('.sec-tab').forEach((t, i) =>
+    t.classList.toggle('active', i === idx));
+  document.getElementById('palSecLabel').textContent =
+    allSections[idx].subject;
+  buildPalette();
+  showQuestion();
+}
+
+function showQuestion() {
+  const sec = allSections[currentSecIdx];
+  const q   = sec.questions[currentQIdx];
+
+  document.getElementById('qNumLbl').textContent =
+    `Q${currentQIdx + 1} of ${sec.questions.length} — ${sec.subject}`;
+
+  const marks = q.marks || 1;
+  const ml    = document.getElementById('qMrkLbl');
+  ml.textContent = `${marks} Mark${marks > 1 ? 's' : ''}`;
+  ml.className   = `q-marks-badge m${marks}`;
+
+  document.getElementById('qTextEl').textContent = q.questionText;
+
+  const opts = [
+    {l:'A',v:'A',t:q.optionA},
+    {l:'B',v:'B',t:q.optionB},
+    {l:'C',v:'C',t:q.optionC},
+    {l:'D',v:'D',t:q.optionD}
+  ];
+
+  document.getElementById('optsEl').innerHTML = opts.map(o => `
+    <div class="option ${userAnswers[q.id] === o.v ? 'selected' : ''}"
+         onclick="pickOpt('${o.v}',this)">
+      <div class="opt-lbl">${o.l}</div>
+      <div>${o.t}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('prevBtn').style.visibility =
+    currentQIdx > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').textContent =
+    currentQIdx === sec.questions.length - 1 ? 'Last' : 'Next';
+
+  updatePalette();
+  updateProgress();
+}
+
+function pickOpt(val, el) {
+  const q = allSections[currentSecIdx].questions[currentQIdx];
+  userAnswers[q.id] = val;
+  document.querySelectorAll('.option')
+    .forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  updatePalette();
+  updateProgress();
+}
+
+function clearAns() {
+  const q = allSections[currentSecIdx].questions[currentQIdx];
+  delete userAnswers[q.id];
+  document.querySelectorAll('.option')
+    .forEach(o => o.classList.remove('selected'));
+  updatePalette();
+  updateProgress();
+}
+
+function markRev() {
+  const q = allSections[currentSecIdx].questions[currentQIdx];
+  reviewSet.has(q.id) ? reviewSet.delete(q.id) : reviewSet.add(q.id);
+  updatePalette();
+  nextQ();
+}
+
+function prevQ() {
+  if (currentQIdx > 0) { currentQIdx--; showQuestion(); }
+}
+
+function nextQ() {
+  const sec = allSections[currentSecIdx];
+  if (currentQIdx < sec.questions.length - 1) {
+    currentQIdx++;
+    showQuestion();
+  }
+}
+
+function buildPalette() {
+  const sec  = allSections[currentSecIdx];
+  const grid = document.getElementById('palGrid');
+  grid.innerHTML = sec.questions.map((q, i) =>
+    `<div class="pq un" id="pq-${i}"
+          onclick="goQ(${i})">${i + 1}</div>`
+  ).join('');
+  updatePalette();
+}
+
+function updatePalette() {
+  const sec = allSections[currentSecIdx];
+  sec.questions.forEach((q, i) => {
+    const el = document.getElementById('pq-' + i);
+    if (!el) return;
+    el.className = 'pq';
+    if (reviewSet.has(q.id))    el.classList.add('rv');
+    else if (userAnswers[q.id]) el.classList.add('an');
+    else                        el.classList.add('un');
+    if (i === currentQIdx)      el.classList.add('cur');
+  });
+}
+
+function updateProgress() {
+  const currentSec = allSections[currentSecIdx];
+  const total      = currentSec.questions.length;
+  
+  // Count how many questions in the CURRENT section have answers in userAnswers
+  let answered = 0;
+  currentSec.questions.forEach(q => {
+    if (userAnswers[q.id]) answered++;
+  });
+
+  document.getElementById('ansCount').textContent =
+    answered + ' answered';
+  document.getElementById('remCount').textContent =
+    (total - answered) + ' left';
+  document.getElementById('progFill').style.width =
+    `${(answered / total) * 100}%`;
+}
+
+function goQ(i) { currentQIdx = i; showQuestion(); }
+
+function showSubmit() {
+  const total    = allSections.reduce(
+    (s,sec) => s + sec.questions.length, 0);
+  const answered = Object.keys(userAnswers).length;
+  document.getElementById('mAns').textContent  = answered;
+  document.getElementById('mSkip').textContent = total - answered;
+  document.getElementById('mRev').textContent  = reviewSet.size;
+  document.getElementById('submitModal').classList.add('show');
+}
+
+function closeSubmit() {
+  document.getElementById('submitModal').classList.remove('show');
+}
+
+async function submitTest() {
+  clearInterval(timerInterval);
+  closeSubmit();
+  hide('examScreen');
+  show('loadScreen');
+  document.getElementById('timerBox').style.display = 'none';
+  document.getElementById('loadMsg').textContent =
+    'Submitting and running ML analysis...';
+
+  const timeTaken = (90 * 60) - secondsLeft;
+
+  // Ensure ALL questions are included in submission (even if skipped)
+  // This allows the backend to record them and return the correct answers for review.
+  allSections.forEach(sec => {
+    sec.questions.forEach(q => {
+        if (!userAnswers[q.id]) {
+            userAnswers[q.id] = null; // Mark as explicitly skipped
+        }
+    });
+  });
+
+  try {
+    const res = await fetch(`${API}/tests/submit`, {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({
+        subject:         'Mock Test ' + currentMockNum,
+        mockTestNumber:  currentMockNum,
+        answers:         userAnswers,
+        timeTakenSecs:   timeTaken
+      })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('lastResult', JSON.stringify(data));
+      
+      const flatQ = allSections.reduce((acc, sec) => acc.concat(sec.questions), []);
+      localStorage.setItem('lastQuestions', JSON.stringify(flatQ));
+      localStorage.setItem('lastAnswers', JSON.stringify(userAnswers));
+
+      window.location.href = 'dashboard.html';
+    } else {
+      alert('Submission failed');
+      location.reload();
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+    location.reload();
+  }
+}
+
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+
+// TCS iON Calculator Logic
+let cUnit = 'deg';
+let cVal = '0';
+let cHis = '';
+let cReset = false;
+
+function toggleCalc() {
+    const c = document.getElementById('calc-container');
+    c.style.display = c.style.display === 'block' ? 'none' : 'block';
+}
+
+function setUnit(u) { cUnit = u; }
+
+function cNum(n) {
+    const d = document.getElementById('calc-screen');
+    if (cVal === '0' || cReset) { cVal = n; cReset = false; }
+    else cVal += n;
+    d.textContent = cVal;
+}
+
+function cInp(op) {
+    const d = document.getElementById('calc-screen');
+    if (op === 'bs') {
+        cVal = cVal.length > 1 ? cVal.slice(0,-1) : '0';
+        d.textContent = cVal;
+    } else {
+        cHis += cVal + (op === '*' ? '*' : op) + ' ';
+        cVal = '0';
+        d.textContent = '0';
+    }
+}
+
+function cExec() {
+    const d = document.getElementById('calc-screen');
+    try {
+        let res = eval(cHis + cVal);
+        d.textContent = Number.isInteger(res) ? res : res.toFixed(6).replace(/\.?0+$/, '');
+        cVal = d.textContent;
+        cHis = '';
+        cReset = true;
+    } catch(e) { d.textContent = 'Error'; cVal = '0'; cHis = ''; }
+}
+
+function cAll() {
+    cVal = '0'; cHis = ''; cReset = false;
+    document.getElementById('calc-screen').textContent = '0';
+}
+
+function scFn(f) {
+    const d = document.getElementById('calc-screen');
+    let v = parseFloat(cVal);
+    let res = 0;
+    try {
+        switch(f) {
+            case 'sin':  res = cUnit === 'deg' ? Math.sin(v * Math.PI/180) : Math.sin(v); break;
+            case 'cos':  res = cUnit === 'deg' ? Math.cos(v * Math.PI/180) : Math.cos(v); break;
+            case 'tan':  res = cUnit === 'deg' ? Math.tan(v * Math.PI/180) : Math.tan(v); break;
+            case 'asin': res = cUnit === 'deg' ? Math.asin(v) * 180/Math.PI : Math.asin(v); break;
+            case 'acos': res = cUnit === 'deg' ? Math.acos(v) * 180/Math.PI : Math.acos(v); break;
+            case 'atan': res = cUnit === 'deg' ? Math.atan(v) * 180/Math.PI : Math.atan(v); break;
+            case 'log':  res = Math.log10(v); break;
+            case 'ln':   res = Math.log(v); break;
+            case 'exp':  res = Math.exp(v); break;
+            case 'sqrt': res = Math.sqrt(v); break;
+            case 'pow2': res = Math.pow(v, 2); break;
+            case 'pow3': res = Math.pow(v, 3); break;
+            case 'inv':  res = 1/v; break;
+            case 'pi':   res = Math.PI; break;
+            case 'e':    res = Math.E; break;
+            case 'fact': res = fct(v); break;
+            case 'ceil': res = Math.ceil(v); break;
+            case 'floor': res = Math.floor(v); break;
+            case 'round': res = Math.round(v); break;
+            case 'abs':   res = Math.abs(v); break;
+        }
+        d.textContent = Number.isInteger(res) ? res : res.toFixed(6).replace(/\.?0+$/, '');
+        cVal = d.textContent;
+        cReset = true;
+    } catch(e) { d.textContent = 'Error'; }
+}
+
+function fct(n) {
+    if (n < 0) return 0;
+    if (n === 0 || n === 1) return 1;
+    let r = 1;
+    for (let i = 2; i <= n; i++) r *= i;
+    return r;
+}
+
+// Draggable Logic
+const handle = document.getElementById('calc-handle');
+const widget = document.getElementById('calc-container');
+let offsetX, offsetY, isDragging = false;
+
+handle.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - widget.getBoundingClientRect().left;
+    offsetY = e.clientY - widget.getBoundingClientRect().top;
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    widget.style.left = (e.clientX - offsetX) + 'px';
+    widget.style.top = (e.clientY - offsetY) + 'px';
+    widget.style.right = 'auto'; // Disable fixed right positioning
+});
+
+document.addEventListener('mouseup', () => isDragging = false);
+
+// Show calculator button ONLY in exam mode
+if (window.startExam) {
+    const originalStartExam = startExam;
+    window.startExam = function(data, num) {
+        originalStartExam(data, num);
+        const cb = document.getElementById('calcBtn');
+        if (cb) {
+            cb.style.display = 'block';
+            cb.classList.add('calc-active');
+        }
+    }
+}
+// Immediate check - if we're already in exam screen (e.g. refresh)
+const examScr = document.getElementById('examScreen');
+if (examScr && examScr.style.display !== 'none') {
+    const cb = document.getElementById('calcBtn');
+    if (cb) {
+        cb.style.display = 'block';
+        cb.classList.add('calc-active');
+    }
+}
+</script>
+<script src="chatbot.js"></script>
+</body>
+</html>
