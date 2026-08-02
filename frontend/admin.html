@@ -472,9 +472,9 @@ async function uploadFile() {
   formData.append('file', selectedFile);
 
   // Choose endpoint based on current mock test
-  let endpoint = `${API}/questions/upload`;
+  let endpoint = `${API}/admin/questions/upload`;
   if (currentMockTest !== null) {
-    endpoint = `${API}/mocktest/${currentMockTest}/upload`;
+    endpoint = `${API}/admin/mocktest/${currentMockTest}/upload`;
   }
 
   try {
